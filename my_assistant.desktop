@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=my_assistant
+Path=/home/pi/AIY-voice-kit-python
+Exec=/home/pi/AIY-voice-kit-python/env/bin/python3 src/my_assistant.py
+Terminal=true
+

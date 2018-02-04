@@ -1,0 +1,14 @@
+[Unit]
+Description=VNC with laptop resolution
+After=network.target
+
+[Service]
+ExecStart=vncserver :1 -geometry 1366x715
+#ExecStart=/usr/bin/vncserver -kill :1; /usr/bin/vncserver :1 -geometry 1366x715
+#WorkingDirectory=/home/pi/AIY-voice-kit-python
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
+
