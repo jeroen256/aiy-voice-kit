@@ -1,10 +1,20 @@
+# Install this service?
+# sudo cp my_assistant.service /etc/systemd/system
+# sudo systemctl daemon-reload
+# sudo systemctl enable my_assistant
+# sudo systemctl start my_assistant
+# other options are: enable, start, status, stop, disable
+# alternative: sudo service my_assistant stop
+
+
+
 [Unit]
-Description=My awesome assistant app
+Description=My assistant app
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c '/home/pi/AIY-voice-kit-python/env/bin/python3 -u src/my_assistant.py'
-WorkingDirectory=/home/pi/AIY-voice-kit-python
+ExecStart=/bin/bash -c './my_assistant.py'
+WorkingDirectory=/home/pi/git/jeroen256/aiy-voice-kit
 Restart=always
 User=pi
 

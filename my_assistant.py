@@ -1,18 +1,4 @@
-#!/usr/bin/env python3
-# Copyright 2017 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
+#!/home/pi/AIY-voice-kit-python/env/bin/python3
 """Run a recognizer using the Google Assistant Library with button support.
 
 The Google Assistant Library has direct access to the audio API, so this Python
@@ -29,6 +15,9 @@ import sys
 import threading
 import subprocess
 
+#sys.path.append('/home/pi/AIY-voice-kit-python/src/aiy')
+sys.path.insert(0, '/home/pi/AIY-voice-kit-python/env/lib/python3.4/site-packages')
+sys.path.insert(0, '/home/pi/AIY-voice-kit-python/src')
 import aiy.assistant.auth_helpers
 import aiy.audio
 import aiy.voicehat
@@ -36,6 +25,8 @@ from google.assistant.library import Assistant
 from google.assistant.library.event import EventType
 import RPi.GPIO as gpio
 import time
+import locale
+locale.setlocale(locale.LC_ALL, 'en_GB.utf8')
 
 logging.basicConfig(
     level=logging.INFO,
@@ -150,14 +141,24 @@ class MyAssistant(object):
         sys.exit()
 
     playshell = None
+    # uses: https://github.com/mps-youtube/mps-youtube
+    # /home/pi/AIY-voice-kit-python/env/bin/python3 -m pip install mps-youtube
+    # /home/pi/AIY-voice-kit-python/env/bin/python3 -m pip install youtube-dl
+    # sudo apt update; sudo apt upgrade; sudo apt install mpv
+    # run /home/pi/AIY-voice-kit-python/env/bin/mpsyt and configure mpv as default player
+    #
+    # or (this does not seem to work for me at the moment): 
+    # install: sudo apt install mps-youtube
+    # error? sudo dpkg-reconfigure locales (install locale en_US.UTF-8 and set as default, check with locale -a)
+    # still error? https://askubuntu.com/questions/205378/unsupported-locale-setting-fault-by-command-not-found
     def play(self, text):
         self._assistant.stop_conversation()
         track = text.replace("play","")
         aiy.audio.say('OK, one moment, Playing' + track)
         #global playshell
         if (self.playshell == None):
-            self.playshell = subprocess.Popen(["/usr/local/bin/mpsyt",""],stdin=subprocess.PIPE ,stdout=subprocess.PIPE)
-            #playshell = subprocess.Popen(["/home/pi/AIY-voice-kit-python/env/bin/mpsyt",""],stdin=subprocess.PIPE ,stdout=subprocess.PIPE)
+            #self.playshell = subprocess.Popen(["/usr/bin/mpsyt",""],stdin=subprocess.PIPE ,stdout=subprocess.PIPE)
+            self.playshell = subprocess.Popen(["/home/pi/AIY-voice-kit-python/env/bin/mpsyt",""],stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self.playshell.stdin.write(bytes('/' + track + '\n1\n', 'utf-8'))
         self.playshell.stdin.flush()
         #gpio.setmode(gpio.BCM)
@@ -170,7 +171,7 @@ class MyAssistant(object):
 
     def stop_playing(self):
         self._assistant.stop_conversation()
-        pkill = subprocess.Popen(["/usr/bin/pkill","vlc"],stdin=subprocess.PIPE)
+        pkill = subprocess.Popen(["/usr/bin/pkill","mpv"],stdin=subprocess.PIPE)
         self.playshell = None
         aiy.audio.say('Finished playing')
 
