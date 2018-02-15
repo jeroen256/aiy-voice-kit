@@ -88,6 +88,7 @@ class MyAssistant(object):
             elif text == 'catch you on the flip side' or text=='shut down' or text=='power off': self.power_off_pi()                 
             elif text == 'restart' or text=='reboot': self.reboot_pi()                
             elif text == 'quit': self.quit()                
+            elif text == 'speak dutch': self.translate()               
 
 
         elif event.type == EventType.ON_END_OF_UTTERANCE:
@@ -105,6 +106,7 @@ class MyAssistant(object):
         # is False when either:
         # 1. The assistant library is not yet ready; OR
         # 2. The assistant library is already in a conversation.
+        if self.playshell != None: self.stop_playing()
         if self._can_start_conversation:
             self._assistant.start_conversation()
 
@@ -151,12 +153,14 @@ class MyAssistant(object):
     # install: sudo apt install mps-youtube
     # error? sudo dpkg-reconfigure locales (install locale en_US.UTF-8 and set as default, check with locale -a)
     # still error? https://askubuntu.com/questions/205378/unsupported-locale-setting-fault-by-command-not-found
+    # still error? https://askubuntu.com/questions/205378/unsupported-locale-setting-fault-by-command-not-found
     def play(self, text):
         self._assistant.stop_conversation()
         track = text.replace("play","")
         aiy.audio.say('OK, one moment, Playing' + track)
         #global playshell
         if (self.playshell == None):
+            subprocess.call('export LC_ALL=C', shell=True)
             #self.playshell = subprocess.Popen(["/usr/bin/mpsyt",""],stdin=subprocess.PIPE ,stdout=subprocess.PIPE)
             self.playshell = subprocess.Popen(["/home/pi/AIY-voice-kit-python/env/bin/mpsyt",""],stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self.playshell.stdin.write(bytes('/' + track + '\n1\n', 'utf-8'))
@@ -174,6 +178,10 @@ class MyAssistant(object):
         pkill = subprocess.Popen(["/usr/bin/pkill","mpv"],stdin=subprocess.PIPE)
         self.playshell = None
         aiy.audio.say('Finished playing')
+    
+    def translate(self):
+        self._assistant.stop_conversation()
+        aiy.audio.say('goedemorgen', 'nl-NL')
 
 def main():
     MyAssistant().start()
