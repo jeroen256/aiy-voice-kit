@@ -110,7 +110,7 @@ class MyAssistant(object):
             if text=='pause':
                 self._assistant.stop_conversation()
                 self.mpsyt_pause(2)
-            elif first=='play': self.mpsyt_play(text)
+            elif first=='play': self.mpsyt_play(words)
             elif text=='stop': 
                 self._assistant.stop_conversation()
                 self.mpsyt_stop()
@@ -172,9 +172,11 @@ class MyAssistant(object):
     # if you think mpv always starts playing to loud? Create file `~/.config/mpv/mpv.conf` containing `volume=25`
     # locale error in mpsyt? add `export LC_ALL=C` to the end of `/etc/profile` set set environment variable. Check with `printenv | grep -i lc`.
     # error? sudo dpkg-reconfigure locales (install locale en_US.UTF-8 and set as default, check with locale -a)
-    def mpsyt_play(self, text):
+    def mpsyt_play(self, words: list):
+        words.pop(0)
         self._assistant.stop_conversation()
-        track = text.replace("play","")
+        #track = words.replace("play","")
+        track = " ".join(words)
         #os.system('export LC_ALL=C')#https://askubuntu.com/questions/205378/unsupported-locale-setting-fault-by-command-not-found
         os.putenv('LC_ALL', 'C')
         self.mpsyt_stop()
