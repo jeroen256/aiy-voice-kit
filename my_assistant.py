@@ -169,6 +169,8 @@ class MyAssistant(object):
     # run /home/pi/AIY-voice-kit-python/env/bin/mpsyt and configure mpv as default player
     # sudo apt install screen
     #
+    # if you think mpv always starts playing to loud? Create file `~/.config/mpv/mpv.conf` containing `volume=25`
+    # locale error in mpsyt? add `export LC_ALL=C` to the end of `/etc/profile` set set environment variable. Check with `printenv | grep -i lc`.
     # error? sudo dpkg-reconfigure locales (install locale en_US.UTF-8 and set as default, check with locale -a)
     def mpsyt_play(self, text):
         self._assistant.stop_conversation()
